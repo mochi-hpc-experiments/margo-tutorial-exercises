@@ -9,7 +9,7 @@ Only the first exercise uses the code present in this repository,
 however this README provides instructions for all three exercises.
 A equivalent repository for C++ projects is available [here]().
 
-# Initial setup
+## Initial setup
 
 TODO: instructions for setting up the docker container.
 
