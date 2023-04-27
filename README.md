@@ -12,7 +12,15 @@ A equivalent repository for C++ projects is available
 
 ## Initial setup
 
+For most people, the docker container will be the most straightforward way to set up your environment.  You don't have to use docker if you already have a way to set up a mochi environment (e.g. spack).
+
+### Setting up with Docker
 TODO: instructions for setting up the docker container.
+
+### Setting up manually
+
+The tutorial depends on the following Mochi packages:
+- margo
 
 ## Exercise 1: simple RPC and RDMA using Margo
 
@@ -68,6 +76,9 @@ instructions for the latter if you have enough time.
   arguments, and receive the response.
 
 * Try out your code by calling `insert` and `lookup` a few times in the client.
+  The server will shut down after `max_rpcs` are issued: that defaults to 4 but
+  you can modify the `server_data` structure in server.c if you want to try
+  more.
 
 ### Bonus
 
@@ -118,7 +129,9 @@ develop a proper phonebook microservice.
   "Create repository from template".
 
 * Click on Settings > Actions > General, and set the Workflow permissions to
-  "Read and write permissions", then Save.
+  "Read and write permissions", then click 'Save' in the `Workflow Permissions`
+  section (there are save buttons for each section that will save only the
+  modifications made to that section)
 
 * Go back to the root of the code (in your browser), and edit
   `initial-setup.json`. Change "alpha" to a service name of your choosing (this
@@ -128,8 +141,11 @@ develop a proper phonebook microservice.
   going to manage, here "phonebook". Click on the green "Commit changes"
   button.
 
-* Wait a little and refresh the page. A GitHub workflow will have run and setup
-  your code. _Note: other github workflows will run to test your code and
+* Wait a little and refresh the page. You might see a brown dot indicating a
+  workflow action is in progress.  Or you might get a 404, which means the
+  workflow completed: as part of the GitHub workflow that sets up your code,
+  it will delete `initial-setup.json`.
+  _Note: other github workflows will run to test your code and
   upload a coverage report to codecov.io whenever you push commits to GitHub.
   These workflows will not work properly if you have made the repository
   private, so you may receive emails from GitHub about some failed workflows.
@@ -159,7 +175,7 @@ reproduce what you have coded in Exercise 1 in the context of this new exercise.
   Go ahead and add two `hg_id_t` RPC ids to represent the insert and lookup.
 
 * Before looking further into the client implementation, open *src/types.h*
-  and add the type definitions for our RPCs (`insert_in_t`, insert_out_t`,
+  and add the type definitions for our RPCs (`insert_in_t`, `insert_out_t`,
   `lookup_in_t`, `lookup_out_t`, etc.). Take the example of the `sum_*`
   structures.
 
