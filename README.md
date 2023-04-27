@@ -2,12 +2,13 @@
 
 This repository contains exercises meant to accompany Mochi tutorials.
 These tutorials focus on using the C language, with the Margo library.
-They revolve around the development of a phone book microservice, i.g.
+They revolve around the development of a phone book microservice, i.e.
 a service that associates names (null-terminated strings) with phone
 numbers (which will be represented as `uint64_t` values).
 Only the first exercise uses the code present in this repository,
 however this README provides instructions for all three exercises.
-A equivalent repository for C++ projects is available [here]().
+A equivalent repository for C++ projects is available
+[here](https://github.com/mochi-hpc-experiments/thallium-tutorial-exercises).
 
 ## Initial setup
 
@@ -44,11 +45,11 @@ of a phonebook object and its destruction when the server terminates.
 * Our two RPCs, which we will call "insert" and "lookup", will need
 argument and return types. Edit the *types.h* file to add the necessary
 type definitions for these RPCs (`insert_in_t`, `insert_out_t`, `lookup_in_t`
-and `lookup_out_t`. _Hint: Mercury represents null-terminated strings with
-the type `hg_string_t`_. Note: while the insertion operation does not
-technically return anything, it is still advised to make all RPCs return at
-least a `uint32_t` error code to inform the sender of the success of the
-operation.
+and `lookup_out_t`). _Hint: Mercury represents null-terminated strings with
+the type `hg_string_t`_, you will have to include `mercury_proc_string.h`.
+Note: while the insertion operation does not technically return anything,
+it is still advised to make all RPCs return at least a `uint32_t` error
+code to inform the sender of the success of the operation.
 
 * Edit *server.c* to add the definitions and declarations of the ULTs for
 our two RPCs. Feel free to copy/paste and modify the existing `sum` RPC.

@@ -16,6 +16,8 @@ int main(int argc, char** argv)
     margo_instance_id mid = margo_init("tcp", MARGO_SERVER_MODE, 0, 0);
     assert(mid);
 
+    margo_set_log_level(mid, MARGO_LOG_INFO);
+
     server_data svr_data = {
         .max_rpcs = 4,
         .num_rpcs = 0
