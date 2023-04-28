@@ -12,15 +12,17 @@ A equivalent repository for C++ projects is available
 
 ## Initial setup
 
-For most people, the docker container will be the most straightforward way to set up your environment.  You don't have to use docker if you already have a way to set up a mochi environment (e.g. spack).
+For most people, the docker container will be the most straightforward way to
+set up your environment.  You don't have to use docker if you already have a
+way to set up a mochi environment (e.g. spack).
 
 ### Setting up with Docker
 TODO: instructions for setting up the docker container.
 
 ### Setting up manually
 
-The tutorial depends on the following Mochi packages:
-- margo
+Exercises 1 and 2 of the tutorial depends on the `margo` package.  Exercise 3
+depends on `bedrock` (and its dependencies).
 
 ## Exercise 1: simple RPC and RDMA using Margo
 
@@ -54,7 +56,8 @@ This will create the *client* and *server* programs.
   argument and return types. Edit the *types.h* file to add the necessary
   type definitions for these RPCs (`insert_in_t`, `insert_out_t`, `lookup_in_t`
   and `lookup_out_t`). _Hint: Mercury represents null-terminated strings with
-  the type `hg_string_t`_, you will have to include `mercury_proc_string.h`.
+  the type `hg_string_t`_, whose serialization routines are defined in
+  the `mercury_proc_string.h` header.
   Note: while the insertion operation does not technically return anything,
   it is still advised to make all RPCs return at least a `uint32_t` error
   code to inform the sender of the success of the operation.
@@ -105,7 +108,8 @@ Here are some tips for this part:
 * You will need to transfer the two bulk handles in the RPC arguments,
   and since names can have a varying size, you will have to also transfer the
   total size of the bulk handle wrapping names, so that the server knows
-  how much memory to allocate for its local buffer.
+  how much memory to allocate for its local buffer.  The `hg_bulk_t` type's
+  serialization routines are defined in `mercury_proc_bulk.h`.
 
 * On the server side, you will need to allocate two buffers; one to receive
   the names via a pull operation, the other to send the phone numbers via a
