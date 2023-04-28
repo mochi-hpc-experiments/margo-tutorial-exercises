@@ -131,14 +131,15 @@ develop a proper phonebook microservice.
 * Wait a little and refresh the page. A GitHub workflow will have run and setup
   your code. _Note: other github workflows will run to test your code and
   upload a coverage report to codecov.io whenever you push commits to GitHub.
-  These workflows will not properly if you have made the repository private, so
-  you may receive emails from GitHub about some failed workflows. Simply ignore
-  them._
+  These workflows will not work properly if you have made the repository
+  private, so you may receive emails from GitHub about some failed workflows.
+  Simply ignore them._
 
 * Clone your code in the docker container, then create a Spack environment
-  and build the code like you did in Exercise 1. Create a build directory and
-  build the code. You may want to use the flag `-DENABLE_TESTS=ON` when calling
-  `cmake` to make sure that the tests are also built.
+  and build the code like you did in Exercise 1, using the spack.yaml file at
+  the root of your new project. Create a build directory and build the code.
+  You may want to use the flag `-DENABLE_TESTS=ON` when calling `cmake` to make
+  sure that the tests are also built.
 
 It is now time to edit the code to make it do what we want. The template
 provides the implementation of two RPCs, "hello" and "sum". You will recognize
@@ -264,7 +265,7 @@ $ bedrock na+sm -c ../examples/bedrock-config.json
   run the following command.
 
 ```
-$ bedrock-query na+sm -a na+sm://17395-0 -p
+$ bedrock-query na+sm -a <copied-address> -p
 ```
 
 You will see the current configuration of the service, including a
@@ -292,6 +293,10 @@ project to add `mochi-yokan+bedrock` in the list of specs.
   `src/*.cmake.in` and `src/*.pc.in` files  to add relevant dependencies
   there. Those are the files used by cmake and pkg-config respectively to
   search for dependencies when people are using your code._
+
+* Edit *src/CMakeLists.txt* to add yokan-client as a dependency for the
+  YP-server library (i.e. find the call to `target_link_libraries` for
+  YP-server and add yokan-client in the list of public dependencies).
 
 * From the build directory, re-run `cmake ..` to make it find Yokan.
 
@@ -354,7 +359,7 @@ You can now assign the field in the `bedrock_module` structure.
   it will display an error message:
 
 ```
-[critical] Missing dependency yokan_provider in configuration
+[critical] Missing dependency yokan_ph in configuration
 ```
 
 So let's fix that by going again into *examples/bedrock-config.json*,
