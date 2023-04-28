@@ -4,7 +4,6 @@
 #include "types.h"
 
 typedef struct {
-    int max_rpcs;
     int num_rpcs;
 } server_data;
 
@@ -19,7 +18,6 @@ int main(int argc, char** argv)
     margo_set_log_level(mid, MARGO_LOG_INFO);
 
     server_data svr_data = {
-        .max_rpcs = 4,
         .num_rpcs = 0
     };
 
@@ -69,8 +67,5 @@ static void sum(hg_handle_t h)
     assert(ret == HG_SUCCESS);
 
     svr_data->num_rpcs += 1;
-    if(svr_data->num_rpcs == svr_data->max_rpcs) {
-        margo_finalize(mid);
-    }
 }
 DEFINE_MARGO_RPC_HANDLER(sum)

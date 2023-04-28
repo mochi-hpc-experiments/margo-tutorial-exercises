@@ -53,7 +53,9 @@ code to inform the sender of the success of the operation.
 
 * Edit *server.c* to add the definitions and declarations of the ULTs for
 our two RPCs. Feel free to copy/paste and modify the existing `sum` RPC.
-Don't forgot to register your RPCs with the margo instance in main!
+Don't forgot to register your RPCs with the margo instance in main,
+and don't forget to call `margo_register_data` to associate the server data
+with the RPC!
 
 * Edit *client.c* and use the existing code as an example to (1) register
 the two RPCs here as well, and (2) define two `insert` and `lookup` functions
