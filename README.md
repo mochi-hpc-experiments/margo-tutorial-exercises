@@ -395,9 +395,13 @@ guidance. Keep the API of Yokan open in a web browser for reference.
 You can find it [here](https://github.com/mochi-hpc/mochi-yokan).
 
 * To add and keep a reference to the Yokan provider handle in the `YP_provider`
-  structure (in *src/provider.h*), you will need to call
-  `yokan_provider_handle_ref_incr` in `YP_provider_register` and
-  `yokan_provider_release` in `YP_finalize_provider` (in *src/provider.c*).
+  structure (in *src/provider.h*), you will need to copy the provided
+  `yokan_provider_handle_t` in `YP_provider_register`, and free this copy in
+  `YP_finalize_provider` (in *src/provider.c*). `yokan_provider_handle_t` is a
+  public structure with no `yokan_provider_handle_ref_incr` function. You will
+  have to manually copy its fields, and call `margo_addr_ref_incr` on the
+  `hg_addr_t` field to increase the reference count of the address (and call
+  `margo_addr_free` on it in `YP_finalize_provider`).
 
 * To be able to pass the Yokan provider handle down to a backend (e.g. a dummy
   phonebook), you will need to change the signature of the functions that
