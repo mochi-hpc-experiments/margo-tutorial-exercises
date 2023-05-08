@@ -57,6 +57,30 @@ $ make
 
 This will create the *client* and *server* programs.
 
+* You can test your client and server programs by opening two terminals
+  (make sure you have run `spack env activate tl-tuto-env` in them to
+  activate your spack environment) and running the following from the *build*
+  directory.
+
+  For the server:
+
+```
+$ src/server na+sm
+```
+
+  This will start the server and print its address. `na+sm` (the shared memory
+  transport) may be changed to `tcp` if you run this code on multiple machines
+  connected via an Ethernet network.
+
+  For the client:
+
+```
+$ src/client na+sm <server-address>
+```
+
+  Copying `<server-address>` from the standard output of the server command.
+  The server is setup to run indefinitely. You may kill it with Ctrl-C.
+
 * Looking at the API in *phonebook.h*, edit *server.c* to add the creation
   of a phonebook object and its destruction when the server terminates.
 
