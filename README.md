@@ -17,12 +17,20 @@ set up your environment.  You don't have to use docker if you already have a
 way to set up a mochi environment (e.g. spack).
 
 ### Setting up with Docker
-TODO: instructions for setting up the docker container.
+
+To use a docker image with Spack and Mochi already installed, please
+use [these instructions](https://github.com/mochi-hpc-experiments/mochi-tutorial).
 
 ### Setting up manually
 
-Exercises 1 and 2 of the tutorial depends on the `margo` package.  Exercise 3
-depends on `bedrock` (and its dependencies).
+If you have Spack already installed on your machine, simply make sure that
+you have the Mochi namespace available for Spack to use. This can be done
+as follows.
+
+```
+$ git clone https://github.com/mochi-hpc/mochi-spack-packages.git
+$ spack repo add mochi-spack-packages
+```
 
 ## Exercise 1: simple RPC and RDMA using Margo
 
