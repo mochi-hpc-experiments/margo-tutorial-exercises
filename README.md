@@ -12,33 +12,33 @@ A equivalent repository for C++ projects is available
 
 ## Initial setup
 
-For most people, the docker container will be the most straightforward way to
-set up your environment.  You don't have to use docker if you already have a
-way to set up a Mochi environment (e.g. Spack already installed and setup on
-your machine).
+Please begin by creating a subdirectory called `mochi-tutorial` on your
+machine and cloning this hands-on exercise repo into it:
 
-### Option 1 (preferred): setting up with Docker
+```
+mkdir mochi-tutorial
+cd mochi-tutorial
+git clone https://github.com/mochi-hpc-experiments/margo-tutorial-exercises.git
+cd ..
+```
 
-You need to have Docker installed on your machine. Once installed and working,
-the following commands will pull the proper Docker image.
+The next step is to set up a Mochi development environment.  The most
+straightforward way to do this is by creating a Docker container using an
+image that is preconfigured for use with the Mochi tutorial hands-on
+exercises.  This method is documented as **Option 1** below.  If you prefer
+to use native environment, please skip to **Option 2**.
+
+### Option 1 (preferred): create a development environment using Docker
+
+You need to first have Docker installed on your machine; please see the
+[Docker installation instructions for your
+platform](https://docs.docker.com/get-docker/). Once Docker is installed,
+you can use the following commands to download a preconfigured image:
 
 ```
 $ docker pull carns/mochi-tutorial:latest
 $ docker tag carns/mochi-tutorial:latest mochi-tutorial
 ```
-
-Before starting the container, create an empty `mochi-tutorial` directory in your
-host machine.
-
-```
-$ mkdir mochi-tutorial
-```
-
-We will map this directory to a `/mochi-tutorial` mount point in the container,
-in which we will place our code. This will allow you to edit the code with your
-editor of choice outside the container, and jump into the container to build
-the code and run it (you can also choose to edit the code directory inside the
-container using Vim if you prefer).
 
 The following run command will instantiate a new container from the
 mochi-tutorial image. The container will have its name and hostname both set
@@ -46,8 +46,15 @@ to "mt1" (short for "mochi tutorial 1"). Note that the container is configured
 to run indefinitely in detached mode and allow login for the "mochi" user with
 no password.
 
+The run command will also map the `mochi-tutorial` directory created in the
+previous section to the `/home/mochi/mochi-tutorial` directory within the
+container for convenience.  This will allow you to edit the code with your
+editor of choice outside the container, and jump into the container to build
+the code and run it (you can also choose to edit the code directory inside
+the container using Vim if you prefer).
+
 ```
-$ docker run --detach --name mt1 --volume $(pwd)/mochi-tutorial:/mochi-tutorial mochi-tutorial
+$ docker run --detach --name mt1 --volume $(pwd)/mochi-tutorial:/home/mochi/mochi-tutorial mochi-tutorial
 ```
 
 Once the container is running, you can open a shell on it using the following
@@ -57,7 +64,20 @@ command.
 $ docker exec -it mt1 /bin/bash
 ```
 
-And you can `cd` into `/mochi-tutorial`, where we will place the code.
+From the container's command prompt you should be in the `/home/mochi`
+directory, with subdirectories available for `spack`,
+`mochi-spack-packages`, and the `mochi-tutorial` directory that is mapped to
+your host machine and populated with tutorial exercise files.
+
+```
+> docker exec -it mt1 /bin/bash
+
+mochi@d3c9c489a2c1:~$ ls
+mochi-spack-packages  mochi-tutorial  spack
+
+mochi@d3c9c489a2c1:~$ ls mochi-tutorial
+margo-tutorial-exercises
+```
 
 We recommand that you open multiple shells while following these exercises,
 so that you can build the code, run a server and run a client in different
@@ -74,7 +94,11 @@ If you need more detailed instructions or want to build the docker image
 yourself from its Dockerfile recipe, please refer to
 [these instructions](https://github.com/mochi-hpc-experiments/mochi-tutorial/blob/main/docker/README.md).
 
-### Option 2: setting up manually
+### Option 2: create a development environment manually
+
+Note that Spack setup and administration is beyond the scope of this
+tutorial; please do not use this option unless you already have an existing
+Spack configuration that you are comfortable using.
 
 If you have Spack already installed and setup on your machine, simply make sure
 that you have the Mochi namespace available for Spack to use. This can be done
