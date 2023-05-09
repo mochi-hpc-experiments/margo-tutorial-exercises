@@ -27,6 +27,19 @@ $ docker pull carns/mochi-tutorial:latest
 $ docker tag carns/mochi-tutorial:latest mochi-tutorial
 ```
 
+Before starting the container, create an empty `mochi-tutorial` directory in your
+host machine.
+
+```
+$ mkdir mochi-tutorial
+```
+
+We will map this directory to a `/mochi-tutorial` mount point in the container,
+in which we will place our code. This will allow you to edit the code with your
+editor of choice outside the container, and jump into the container to build
+the code and run it (you can also choose to edit the code directory inside the
+container using Vim if you prefer).
+
 The following run command will instantiate a new container from the
 mochi-tutorial image. The container will have its name and hostname both set
 to "mt1" (short for "mochi tutorial 1"). Note that the container is configured
@@ -34,7 +47,7 @@ to run indefinitely in detached mode and allow login for the "mochi" user with
 no password.
 
 ```
-$ docker run -d -h mt1 --name mt1 mochi-tutorial
+$ docker run --detach --name mt1 --volume $(pwd)/mochi-tutorial:/mochi-tutorial mochi-tutorial
 ```
 
 Once the container is running, you can open a shell on it using the following
@@ -44,9 +57,11 @@ command.
 $ docker exec -it mt1 /bin/bash
 ```
 
+And you can `cd` into `/mochi-tutorial`, where we will place the code.
+
 We recommand that you open multiple shells while following these exercises,
-so that you can run a server and a client in different terminals, edit files
-and build the code.
+so that you can build the code, run a server and run a client in different
+terminals
 
 You can use the following commands to stop and restart the "mt1" container.
 
@@ -54,9 +69,6 @@ You can use the following commands to stop and restart the "mt1" container.
 $ docker stop mt1
 $ docker start mt1
 ```
-
-IMPORTANT: Restarting the container will erase your work from it, as well as
-all the packages installed by spack.
 
 If you need more detailed instructions or want to build the docker image
 yourself from its Dockerfile recipe, please refer to
