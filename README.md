@@ -2,7 +2,7 @@
 
 This repository contains exercises meant to accompany Mochi tutorials.
 These tutorials focus on using the C language, with the Margo library.
-They revolve around the development of a phone book microservice, i.e.
+They revolve around the development of a phonebook microservice, i.e.
 a service that associates names (null-terminated strings) with phone
 numbers (which will be represented as `uint64_t` values).
 Only the first exercise uses the code present in this repository,
@@ -14,17 +14,55 @@ A equivalent repository for C++ projects is available
 
 For most people, the docker container will be the most straightforward way to
 set up your environment.  You don't have to use docker if you already have a
-way to set up a mochi environment (e.g. spack).
+way to set up a Mochi environment (e.g. Spack already installed and setup on
+your machine).
 
-### Setting up with Docker
+### Option 1 (preferred): setting up with Docker
 
-To use a docker image with Spack and Mochi already installed, please
-use [these instructions](https://github.com/mochi-hpc-experiments/mochi-tutorial).
+You need to have Docker installed on your machine. Once installed and working,
+the following commands will pull the proper Docker image.
 
-### Setting up manually
+```
+$ docker pull carns/mochi-tutorial:latest
+$ docker tag carns/mochi-tutorial:latest mochi-tutorial
+```
 
-If you have Spack already installed on your machine, simply make sure that
-you have the Mochi namespace available for Spack to use. This can be done
+The following run command will instantiate a new container from the
+mochi-tutorial image. The container will have its name and hostname both set
+to "mt1" (short for "mochi tutorial 1"). Note that the container is configured
+to run indefinitely in detached mode and allow login for the "mochi" user with
+no password.
+
+```
+$ docker run -d -h mt1 --name mt1 mochi-tutorial
+```
+
+Once the container is running, you can open a shell on it using the following
+command.
+
+```
+$ docker exec -it mt1 /bin/bash
+```
+
+We recommand that you open multiple shells while following these exercises,
+so that you can run a server and a client in different terminals, edit files
+and build the code.
+
+You can use the following commands to stop and restart the "mt1" container.
+
+```
+$ docker stop mt1
+$ docker start mt1
+```
+
+If you need more detailed instructions or want to build the docker image
+yourself from its Dockerfile recipe, please refer to
+[these instructions](https://github.com/mochi-hpc-experiments/mochi-tutorial/blob/main/docker/README.md).
+
+### Option 2: setting up manually
+
+If you have Spack already installed and setup on your machine, simply make sure
+that you have the Mochi namespace available for Spack to use. This can be done
 as follows.
 
 ```
@@ -58,7 +96,7 @@ $ make
 This will create the *client* and *server* programs.
 
 * You can test your client and server programs by opening two terminals
-  (make sure you have run `spack env activate tl-tuto-env` in them to
+  (make sure you have run `spack env activate margo-tuto-env` in them to
   activate your spack environment) and running the following from the *build*
   directory.
 
@@ -78,16 +116,23 @@ $ src/server na+sm
 $ src/client na+sm <server-address>
 ```
 
-  Copying `<server-address>` from the standard output of the server command.
+  Copy `<server-address>` from the standard output of the server command.
   The server is setup to run indefinitely. You may kill it with Ctrl-C.
+  Note that the server address will change whenever you restart it.
 
 * Looking at the API in *phonebook.h*, edit *server.c* to add the creation
   of a phonebook object and its destruction when the server terminates.
+  This phonebook should be added as a field to the `server_data` structure
+  and to the `svr_data` instance (see comments `(1)` to `(3)` in *server.c*.
+  This instance is attached to RPCs using `margo_register_data` so the
+  phonebook can be accessed inside RPCs.
 
 * Our two RPCs, which we will call "insert" and "lookup", will need
   argument and return types. Edit the *types.h* file to add the necessary
   type definitions for these RPCs (`insert_in_t`, `insert_out_t`, `lookup_in_t`
-  and `lookup_out_t`). _Hint: Mercury represents null-terminated strings with
+  and `lookup_out_t`, see comment `(4)`). Do so using the Mercury macros,
+  following the model of the `sum_in_t` and `sum_out_t` types.
+  _Hint: Mercury represents null-terminated strings with
   the type `hg_string_t`_, whose serialization routines are defined in
   the `mercury_proc_string.h` header.
   Note: while the insertion operation does not technically return anything,
@@ -99,36 +144,50 @@ the _insert_ RPC and ignore the _lookup_ RPC. You can circle back to these
 instructions for the latter if you have enough time.
 
 * Edit *server.c* to add the definitions and declarations of the ULTs for
-  our two RPCs. Feel free to copy/paste and modify the existing `sum` RPC.
-  Don't forgot to register your RPCs with the margo instance in main,
-  and don't forget to call `margo_register_data` to associate the server data
-  with the RPC!
+  our two RPCs (see comment `(5)` and `(6)`). Feel free to copy/paste and
+  modify the existing `sum` RPC. Don't forget to register your RPCs with the
+  margo instance in main (comment `(7)`), and don't forget to call
+  `margo_register_data` to associate the server data with the RPC.
 
 * Edit *client.c* and use the existing code as an example to (1) register
-  the two RPCs here as well, and (2) define two `insert` and `lookup` functions
-  that will take a `margo_instance_id` alongside the necessary arguments
-  to create an `hg_handle_t`, forward it to the server with the proper
-  arguments, and receive the response.
+  the two RPCs here as well (comment `(8)`), and (2) define two `insert`
+  and `lookup` functions that will take a `margo_instance_id` alongside the
+  necessary arguments to create an `hg_handle_t`, forward it to the server
+  with the proper arguments, and receive the response (comment `(9)`).
+  These functions will need to call `margo_create` to create the `hg_handle_t`
+  handle for the RPC, `margo_forward` to forward it to the server,
+  `margo_get_output` to retrieve the response from the server,
+  `margo_free_output` to free this response, and `margo_destroy` to destroy
+  the `hg_handle_t` handle.
 
-* Try out your code by calling `insert` and `lookup` a few times in the client.
-  The server will shut down after `max_rpcs` are issued: that defaults to 4 but
-  you can modify the `server_data` structure in server.c if you want to try
-  more.
+* Try out your code by calling `insert` and `lookup` a few times in `main`
+  (comment `(10)`).
 
-### Bonus
+### Bonus: using RDMA to transfer larger amounts of data.
 
 Do this bonus part only if you have time, or as an exercise later.
-In this part, we will add a `lookup_multi` RPC that uses
-RDMA to send multiple names at once and return the array of associated phone
-numbers(in practice this would be too little data to call for the use of RDMA,
-but we will just pretent). For this, you may use the example
+This part is less guided. You should now know how to add new RPCs to your code.
+
+In this part, we will add a `lookup_multi` RPC that uses RDMA to send multiple
+names at once and return the array of associated phone numbers (in practice
+this would be too little data to call for the use of RDMA, but we will just
+pretend). For this, you may use the example
 [here](https://mochi.readthedocs.io/en/latest/margo/04_bulk.html).
 
 Here are some tips for this part:
 
-* Your `lookup_multi` client-side function could take the number of names as a
-  `uint32_t` and the list of names to look up as an array of null-terminated
-  strings (`const char* const*`), as well as an output array of `uint64_t`.
+* On the client side, your `lookup_multi` function could take the number of
+  names as a `uint32_t` and the list of names to look up as an array of
+  null-terminated strings (`const char* const*`), as well as an output array
+  of `uint64_t`. See comment `(11)` for a prototype.
+
+* The important functions to work with RDMA are the following: `margo_bulk_create`
+  (create an `hg_bulk_t` to expose a list of local memory segments for RDMA),
+  `margo_bulk_transfer` (push/pull data to/from a local bulk handle, to/from
+  a remote bulk handle), and `margo_bulk_free` (free a local `hg_bulk_t` created
+  by `margo_bulk_create`). Alongside the documentation on ReadTheDocs, the
+  [margo.h](https://github.com/mochi-hpc/mochi-margo/blob/main/include/margo.h)
+  header provides the necessary information to work with these function.
 
 * You will need to create two bulk handles on the client and two on the server.
   On the client, the first will expose the names as read-only (remember that
@@ -149,9 +208,9 @@ Here are some tips for this part:
 
 * You will need to create two `hg_bulk_t` to expose these buffers.
 
-* After having transferred the names, they will be in the server's contiguous
-  buffers. You can rely on the null-terminators to know where one name ends and
-  the next starts.
+* After having transferred the names, they will be in the server's buffer, which,
+  contrary to the client's memory, is contiguous. You can rely on the
+  null-terminators to know where one name ends and the next starts.
 
 ## Exercise 2: a proper phonebook Mochi component
 
