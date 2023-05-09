@@ -55,6 +55,9 @@ $ docker stop mt1
 $ docker start mt1
 ```
 
+IMPORTANT: Restarting the container will erase your work from it, as well as
+all the packages installed by spack.
+
 If you need more detailed instructions or want to build the docker image
 yourself from its Dockerfile recipe, please refer to
 [these instructions](https://github.com/mochi-hpc-experiments/mochi-tutorial/blob/main/docker/README.md).
