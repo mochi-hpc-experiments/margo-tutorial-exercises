@@ -92,7 +92,7 @@ $ docker start mt1
 
 If you need more detailed instructions or want to build the docker image
 yourself from its Dockerfile recipe, please refer to
-[these instructions](https://github.com/mochi-hpc-experiments/mochi-tutorial/blob/main/docker/README.md).
+[these instructions](https://github.com/mochi-hpc-experiments/mochi-docker/).
 
 ### Option 2: create a development environment manually
 
