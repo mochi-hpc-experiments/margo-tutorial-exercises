@@ -5,8 +5,8 @@
 #include "types.h"
 
 /* (9) Define the insert and lookup functions with the following prototype:
- * void insert(margo_instance_id mid, hg_id_t rpc_id, const char* name, uint64_t number);
- * uint64_t lookup(margo_instance_id mid, hg_id_t rpc_id, const char* name);
+ * void insert(margo_instance_id mid, hg_addr_t svr_addr, hg_id_t rpc_id, const char* name, uint64_t number);
+ * uint64_t lookup(margo_instance_id mid, hg_addr_t svr_addr, hg_id_t rpc_id, const char* name);
  */
 
 int main(int argc, char** argv)
